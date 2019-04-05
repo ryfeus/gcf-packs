@@ -1,4 +1,4 @@
 import tensorflow
 
 def handler(request):
-    return 0
+    return f'Hello Tensorflow!'
