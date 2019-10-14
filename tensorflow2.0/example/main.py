@@ -8,6 +8,7 @@ import numpy
 # We keep model as global variable so we don't have to reload it in case of warm invocations
 model = None
 
+BUCKET_NAME = '<your_bucket_name>'
 
 class CustomModel(Model):
   def __init__(self):
@@ -25,37 +26,37 @@ class CustomModel(Model):
 
 
 def download_blob(bucket_name, source_blob_name, destination_file_name):
-    """Downloads a blob from the bucket."""
-    storage_client = storage.Client()
-    bucket = storage_client.get_bucket(bucket_name)
-    blob = bucket.blob(source_blob_name)
+  """Downloads a blob from the bucket."""
+  storage_client = storage.Client()
+  bucket = storage_client.get_bucket(bucket_name)
+  blob = bucket.blob(source_blob_name)
 
-    blob.download_to_filename(destination_file_name)
+  blob.download_to_filename(destination_file_name)
 
   print('Blob {} downloaded to {}.'.format(source_blob_name, destination_file_name))
 
 
 def handler(request):
-    global model
+  global model
   class_names = [
     'T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat', 'Sandal', 'Shirt', 'Sneaker', 'Bag',
     'Ankle boot'
   ]
 
-    # Model load which only happens during cold starts
-    if model is None:
-    download_blob('<your_bucket_name>', 'tensorflow/fashion_mnist_weights.index',
+  # Model load which only happens during cold starts
+  if model is None:
+    download_blob(BUCKET_NAME, 'tensorflow/fashion_mnist_weights.index',
                   '/tmp/fashion_mnist_weights.index')
-    download_blob('<your_bucket_name>', 'tensorflow/fashion_mnist_weights.data-00000-of-00001',
+    download_blob(BUCKET_NAME, 'tensorflow/fashion_mnist_weights.data-00000-of-00001',
                   '/tmp/fashion_mnist_weights.data-00000-of-00001')
-        model = CustomModel()
-        model.load_weights('/tmp/fashion_mnist_weights')
-    
-    download_blob('<your_bucket_name>', 'tensorflow/test.png', '/tmp/test.png')
-    image = numpy.array(Image.open('/tmp/test.png'))
+    model = CustomModel()
+    model.load_weights('/tmp/fashion_mnist_weights')
+
+  download_blob(BUCKET_NAME, 'tensorflow/test.png', '/tmp/test.png')
+  image = numpy.array(Image.open('/tmp/test.png'))
   input_np = (numpy.array(Image.open('/tmp/test.png')) / 255)[numpy.newaxis, :, :, numpy.newaxis]
-    predictions = model.call(input_np)
-    print(predictions)
+  predictions = model.call(input_np)
+  print(predictions)
   print("Image is " + class_names[numpy.argmax(predictions)])
-    
-    return class_names[numpy.argmax(predictions)]
+
+  return class_names[numpy.argmax(predictions)]
