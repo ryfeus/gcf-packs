@@ -53,8 +53,8 @@ def handler(request):
     model.load_weights('/tmp/fashion_mnist_weights')
 
   download_blob(BUCKET_NAME, 'tensorflow/test.png', '/tmp/test.png')
-  image = numpy.array(Image.open('/tmp/test.png'))
-  input_np = (numpy.array(Image.open('/tmp/test.png')) / 255)[numpy.newaxis, :, :, numpy.newaxis]
+  image = Image.open('/tmp/test.png')
+  input_np = (numpy.array(image).astype('float32') / 255)[numpy.newaxis, :, :, numpy.newaxis]
   predictions = model.call(input_np)
   print(predictions)
   print('Image is ' + class_names[numpy.argmax(predictions)])
