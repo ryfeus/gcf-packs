@@ -5,7 +5,7 @@ from tensorflow.keras import Model
 from PIL import Image
 import numpy
 
-# We keep model as global varibale so we don't have to reload it in case of warm invocations
+# We keep model as global variable so we don't have to reload it in case of warm invocations
 model = None
 
 
