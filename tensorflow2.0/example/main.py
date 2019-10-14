@@ -57,6 +57,6 @@ def handler(request):
   input_np = (numpy.array(Image.open('/tmp/test.png')) / 255)[numpy.newaxis, :, :, numpy.newaxis]
   predictions = model.call(input_np)
   print(predictions)
-  print("Image is " + class_names[numpy.argmax(predictions)])
+  print('Image is ' + class_names[numpy.argmax(predictions)])
 
   return class_names[numpy.argmax(predictions)]
